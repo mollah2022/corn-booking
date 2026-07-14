@@ -1,33 +1,34 @@
-from app import db
 from datetime import datetime
+from sqlalchemy import Column, Integer, String, Numeric, Date, DateTime
+from app.db import Base
 
 
-class Booking(db.Model):
+class Booking(Base):
     __tablename__ = "bookings"
 
-    id = db.Column(db.Integer, primary_key=True)
+    id = Column(Integer, primary_key=True)
 
-    transaction_id = db.Column(db.String(64), unique=True, nullable=False)
-    conversion_key = db.Column(db.String(255))
-    property_id = db.Column(db.String(64))
-    referral_property_id = db.Column(db.String(64))
+    transaction_id = Column(String(64), unique=True, nullable=False)
+    conversion_key = Column(String(255))
+    property_id = Column(String(64))
+    referral_property_id = Column(String(64))
 
-    status = db.Column(db.String(32))
+    status = Column(String(32))
 
-    travel_purpose = db.Column(db.String(32))
-    country_code = db.Column(db.String(8))
-    region = db.Column(db.String(64))
+    travel_purpose = Column(String(32))
+    country_code = Column(String(8))
+    region = Column(String(64))
 
-    currency = db.Column(db.String(8))
+    currency = Column(String(8))
 
-    check_in_date = db.Column(db.Date)
-    check_out_date = db.Column(db.Date)
+    check_in_date = Column(Date)
+    check_out_date = Column(Date)
 
-    site_key = db.Column(db.String(16))
-    device = db.Column(db.String(16))
+    site_key = Column(String(16))
+    device = Column(String(16))
 
-    total_price = db.Column(db.Numeric(12, 2))
-    revenue_usd = db.Column(db.Numeric(12, 2))
+    total_price = Column(Numeric(12, 2))
+    revenue_usd = Column(Numeric(12, 2))
 
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)

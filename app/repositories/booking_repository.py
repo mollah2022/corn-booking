@@ -1,6 +1,6 @@
-from app import db
 from app.models.booking import Booking
 from app.repositories.booking_repository_interface import BookingRepositoryInterface
+from app.services.common_service import CommonService
 from sqlalchemy.dialects.postgresql import insert as pg_insert
 
 CHUNK_SIZE = 50
@@ -25,52 +25,31 @@ UPSERT_COLUMNS = [
 
 class BookingRepository(BookingRepositoryInterface):
 
-    def find_by_transaction_id(self, transaction_id: str):
-        return Booking.query.filter_by(transaction_id=transaction_id).first()
+    def find_by_transaction_id(self, session, transaction_id: str):
+        return session.query(Booking).filter_by(transaction_id=transaction_id).first()
 
-    def insert(self, booking_data: dict):
-        booking = Booking(**booking_data)
-        db.session.add(booking)
-        db.session.commit()
-        return booking
-
-    def update(self, booking, booking_data: dict):
-        for key, value in booking_data.items():
-            setattr(booking, key, value)
-        db.session.commit()
-        return booking
-
-    def bulk_save(self, records: list) -> dict:
-        """
-        Uses PostgreSQL's native UPSERT (INSERT ... ON CONFLICT DO UPDATE)
-        instead of manual select-then-insert/update.
-        """
+    def bulk_save(self, session, records: list) -> dict:
         inserted_count = 0
         updated_count = 0
 
-        for i in range(0, len(records), CHUNK_SIZE):
-            chunk = records[i:i + CHUNK_SIZE]
-
+        for chunk in CommonService.chunk_list(records, CHUNK_SIZE):
             transaction_ids = [r["transaction_id"] for r in chunk]
 
             existing_ids = {
                 row.transaction_id
-                for row in Booking.query.filter(
-                    Booking.transaction_id.in_(transaction_ids)
-                ).all()
+                for row in session.query(Booking.transaction_id)
+                .filter(Booking.transaction_id.in_(transaction_ids))
+                .all()
             }
 
             stmt = pg_insert(Booking).values(chunk)
-
             update_dict = {col: getattr(stmt.excluded, col) for col in UPSERT_COLUMNS}
-
             stmt = stmt.on_conflict_do_update(
                 index_elements=["transaction_id"],
                 set_=update_dict,
             )
 
-            db.session.execute(stmt)
-            db.session.commit()
+            session.execute(stmt)
 
             for record in chunk:
                 if record["transaction_id"] in existing_ids:

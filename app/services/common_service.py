@@ -6,6 +6,7 @@ from app.data.status_map import STATUS_MAP
 ONE_SECOND = 1
 MAX_CALLS_PER_SECOND = 1
 
+
 class CommonService:
 
     @staticmethod
@@ -18,7 +19,6 @@ class CommonService:
     def map_status(raw_status: str) -> str:
         return STATUS_MAP.get(raw_status, raw_status)
 
-    
     @staticmethod
     @sleep_and_retry
     @limits(calls=MAX_CALLS_PER_SECOND, period=ONE_SECOND)
@@ -42,3 +42,9 @@ class CommonService:
             elif part.startswith("p-"):
                 parsed["referral_property_id"] = part[2:]
         return parsed
+
+    @staticmethod
+    def chunk_list(records: list, chunk_size: int):
+        """Reusable chunking utility - yields successive chunk_size-sized pieces."""
+        for i in range(0, len(records), chunk_size):
+            yield records[i:i + chunk_size]

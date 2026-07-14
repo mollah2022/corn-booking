@@ -49,17 +49,6 @@ class BookingService:
             "revenue_usd": revenue_usd,
         }
 
-    def save(self, raw_data: dict) -> str:
-        transformed = self.transform(raw_data)
-        existing = self.booking_repository.find_by_transaction_id(transformed["transaction_id"])
-
-        if existing:
-            self.booking_repository.update(existing, transformed)
-            return "updated"
-        else:
-            self.booking_repository.insert(transformed)
-            return "inserted"
-
-    def save_all(self, raw_bookings: list) -> dict:
+    def save_all(self, session, raw_bookings: list) -> dict:
         transformed_records = [self.transform(raw) for raw in raw_bookings]
-        return self.booking_repository.bulk_save(transformed_records)
+        return self.booking_repository.bulk_save(session, transformed_records)

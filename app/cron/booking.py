@@ -2,7 +2,8 @@ import sys
 import logging
 from datetime import datetime, timedelta, timezone
 
-from app import create_app
+from app.db import session_scope
+from app.config.settings import BOOKING_API_BASE_URL, BOOKING_API_KEY
 from app.api_client.booking_api_client import BookingApiClient
 from app.repositories.booking_repository import BookingRepository
 from app.services.booking_service import BookingService
@@ -18,7 +19,6 @@ class BookingCron:
     """Cron job responsible for syncing booking data from the API App into the database."""
 
     def __init__(self, updated_from: str = None, updated_to: str = None):
-        self.app = create_app()
         self.updated_from = updated_from
         self.updated_to = updated_to
 
@@ -34,8 +34,8 @@ class BookingCron:
 
     def _build_dependencies(self):
         self.api_client = BookingApiClient(
-            base_url=self.app.config["BOOKING_API_BASE_URL"],
-            api_key=self.app.config.get("BOOKING_API_KEY"),
+            base_url=BOOKING_API_BASE_URL,
+            api_key=BOOKING_API_KEY,
         )
         self.booking_repository = BookingRepository()
         self.booking_service = BookingService(self.booking_repository)
@@ -48,9 +48,9 @@ class BookingCron:
             logger.error(f"Failed to fetch bookings from API App: {e}")
             sys.exit(1)
 
-    def _process_bookings(self, raw_bookings: list):
+    def _process_bookings(self, session, raw_bookings: list):
         try:
-            result = self.booking_service.save_all(raw_bookings)
+            result = self.booking_service.save_all(session, raw_bookings)
             self.inserted_count = result["inserted"]
             self.updated_count = result["updated"]
         except Exception as e:
@@ -65,12 +65,14 @@ class BookingCron:
         )
 
     def run(self):
-        with self.app.app_context():
-            self._resolve_date_range()
-            self._build_dependencies()
-            raw_bookings = self._fetch_raw_bookings()
-            self._process_bookings(raw_bookings)
-            self._report()
+        self._resolve_date_range()
+        self._build_dependencies()
+        raw_bookings = self._fetch_raw_bookings()
+
+        with session_scope() as session:
+            self._process_bookings(session, raw_bookings)
+
+        self._report()
 
 
 if __name__ == "__main__":

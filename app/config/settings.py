@@ -14,13 +14,10 @@ config = Dynaconf(
     load_dotenv=True,
 )
 
+DATABASE_URL = (
+    f"postgresql+psycopg2://{config.db_user}:{config.db_password}"
+    f"@{config.db_host}:{config.db_port}/{config.db_name}"
+)
 
-class Settings:
-    SQLALCHEMY_DATABASE_URI = (
-        f"postgresql+psycopg2://{config.db_user}:{config.db_password}"
-        f"@{config.db_host}:{config.db_port}/{config.db_name}"
-    )
-    SQLALCHEMY_TRACK_MODIFICATIONS = False
-
-    BOOKING_API_BASE_URL = config.booking_api_base_url
-    BOOKING_API_KEY = config.get("booking_api_key", None)
+BOOKING_API_BASE_URL = config.booking_api_base_url
+BOOKING_API_KEY = config.get("booking_api_key", None)
