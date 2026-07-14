@@ -1,0 +1,23 @@
+# Python
+venv/
+__pycache__/
+*.pyc
+*.pyo
+
+# Secrets / credentials
+.env
+.secrets.toml
+
+# Logs
+logs/
+*.log
+
+# Docker volumes (local data, git এ লাগে না)
+postgres_data/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
