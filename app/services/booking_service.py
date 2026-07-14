@@ -59,3 +59,7 @@ class BookingService:
         else:
             self.booking_repository.insert(transformed)
             return "inserted"
+
+    def save_all(self, raw_bookings: list) -> dict:
+        transformed_records = [self.transform(raw) for raw in raw_bookings]
+        return self.booking_repository.bulk_save(transformed_records)

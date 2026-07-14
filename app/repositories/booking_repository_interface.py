@@ -14,3 +14,7 @@ class BookingRepositoryInterface(ABC):
     @abstractmethod
     def update(self, booking, booking_data: dict):
         pass
+
+    @abstractmethod
+    def bulk_save(self,records: list) -> dict:
+        pass
