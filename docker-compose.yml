@@ -1,0 +1,38 @@
+version: "3.9"
+
+services:
+  postgres:
+    image: postgres:16
+    container_name: booking_postgres
+    restart: always
+    environment:
+      POSTGRES_USER: booking_user
+      POSTGRES_PASSWORD: booking_pass
+      POSTGRES_DB: booking_db
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - booking_net
+
+  dbgate:
+    image: dbgate/dbgate
+    container_name: booking_dbgate
+    restart: always
+    ports:
+      - "3433:3000"
+    volumes:
+      - dbgate_data:/root/.dbgate
+    depends_on:
+      - postgres
+    networks:
+      - booking_net
+
+volumes:
+  postgres_data:
+  dbgate_data:
+
+networks:
+  booking_net:
+    driver: bridge
