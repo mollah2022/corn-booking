@@ -1,0 +1,15 @@
+[default]
+flask_env = "development"
+db_host = "localhost"
+db_port = 5433
+db_name = "booking_db"
+db_user = "booking_user"
+booking_api_base_url = "http://localhost:5001"
+
+[development]
+db_host = "localhost"
+booking_api_base_url = "http://localhost:5001"
+
+[production]
+db_host = "@format {this.env_db_host}"
+booking_api_base_url = "@format {this.env_booking_api_url}"
