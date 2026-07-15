@@ -5,6 +5,9 @@ db_port = 5433
 db_name = "booking_db"
 db_user = "booking_user"
 booking_api_base_url = "http://localhost:5001"
+redis_host = "localhost"
+redis_port = 6379
+
 
 [development]
 db_host = "localhost"

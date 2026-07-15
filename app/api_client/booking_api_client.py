@@ -1,4 +1,5 @@
 import requests
+from tenacity import retry, stop_after_attempt, wait_exponential, retry_if_exception_type
 from app.api_client.booking_api_interface import BookingApiInterface
 
 
@@ -8,6 +9,12 @@ class BookingApiClient(BookingApiInterface):
         self.base_url = base_url
         self.api_key = api_key
 
+    @retry(
+        stop=stop_after_attempt(3),
+        wait=wait_exponential(multiplier=2, min=2, max=10),
+        retry=retry_if_exception_type(requests.exceptions.RequestException),
+        reraise=True,
+    )   
     def fetch_bookings(self, updated_from: str, updated_to: str) -> list:
         headers = {}
         if self.api_key:

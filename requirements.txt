@@ -31,3 +31,7 @@ tzlocal==5.4.4
 urllib3==2.7.0
 Werkzeug==3.1.8
 wrapt==2.2.2
+tenacity==9.0.0
+tenacity==9.0.0
+tenacity==9.0.0
+redis==5.0.8

@@ -29,6 +29,15 @@ services:
     networks:
       - booking_net
 
+  redis:
+    image: redis:7-alpine
+    container_name: booking_redis
+    restart: always
+    ports:
+      - "6379:6379"
+    networks:
+      - booking_net
+
 volumes:
   postgres_data:
   dbgate_data:
