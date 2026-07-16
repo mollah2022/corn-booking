@@ -21,3 +21,5 @@ DATABASE_URL = (
 
 BOOKING_API_BASE_URL = config.booking_api_base_url
 BOOKING_API_KEY = config.get("booking_api_key", None)
+
+EXCHANGE_RATE_API_BASE_URL = config.exchange_rate_api_base_url

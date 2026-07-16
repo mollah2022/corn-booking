@@ -1,0 +1,56 @@
+{
+  "id": "7843159201",
+  "end": "2026-09-18T00:00:00+00:00",
+  "cars": null,
+  "label": "k-htl_d-m_u-MTc4OTQ1NjA0NzgxMjM0NTY3OA==_g-MjEwMDAxMjM0NS4xNzg5NDU2MDQ3_t-gp_p-BC-483720",
+  "price": {
+    "total_price": {"booker_currency": 186.75, "product_currency": 186.75},
+    "commissionable_price": {"booker_currency": 180.20, "product_currency": 180.20}
+  },
+  "start": "2026-09-15T00:00:00+00:00",
+  "taxis": null,
+  "booker": {
+    "address": {"city": null, "country": "de"},
+    "language": "en",
+    "platform": "desktop",
+    "travel_purpose": "leisure"
+  },
+  "status": "booked",
+  "created": "2026-07-10T13:42:15+00:00",
+  "flights": null,
+  "updated": "2026-07-10T13:42:17+00:00",
+  "affiliate": 3178459,
+  "commission": {
+    "actual_percentage": null,
+    "actual_commission_amount": null,
+    "estimate_commission_amount": {"booker_currency": 15.87, "product_currency": 15.87}
+  },
+  "currencies": {"booker": "EUR", "product": "EUR"},
+  "attractions": null,
+  "accommodations": {
+    "name": "Grand Plaza Milano",
+    "location": {"city": -214512, "address": "Corso Vittorio 18", "country": "it"},
+    "inventory": {"type": "sell", "third_party": false},
+    "reservation": "7843159201",
+    "number_of_guests": 3
+  },
+  "accommodation_details": {
+    "id": "7843159201",
+    "products": [
+      {
+        "room": "78211459",
+        "price": {
+          "base": {"booker_currency": 165.90, "accommodation_currency": 165.90},
+          "total": {"booker_currency": 186.75, "accommodation_currency": 186.75},
+          "charges": []
+        },
+        "bundle": null,
+        "status": "booked",
+        "allocation": {"adults": 2, "guests": 3, "children": [7]},
+        "room_reservation": "9027456312"
+      }
+    ],
+    "accommodation": 782114,
+    "cancellation_details": null
+  }
+}

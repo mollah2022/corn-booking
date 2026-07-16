@@ -6,10 +6,11 @@ class BookingService:
     def __init__(self, booking_repository):
         self.booking_repository = booking_repository
         self._rate_cache = {}
+        self.common_service = CommonService()
 
     def _get_cached_rate(self, currency: str) -> float:
         if currency not in self._rate_cache:
-            self._rate_cache[currency] = CommonService.get_exchange_rate(currency, "USD")
+            self._rate_cache[currency] = self.common_service.get_exchange_rate(currency, "USD")
         return self._rate_cache[currency]
 
     def transform(self, raw_data: dict) -> dict:
@@ -19,7 +20,7 @@ class BookingService:
         price = raw_data.get("price") or {}
         acc_details = raw_data.get("accommodation_details") or {}
 
-        label_parts = CommonService.parse_label(raw_data.get("label", ""))
+        label_parts = self.common_service.parse_label(raw_data.get("label", ""))
         country_code = (booker.get("address") or {}).get("country", "").upper()
 
         total_price = (price.get("total_price") or {}).get("booker_currency")
@@ -36,10 +37,10 @@ class BookingService:
             "conversion_key": raw_data.get("label"),
             "property_id": f"BC-{acc_details.get('accommodation')}" if acc_details.get("accommodation") else None,
             "referral_property_id": label_parts.get("referral_property_id"),
-            "status": CommonService.map_status(raw_data.get("status")),
+            "status": self.common_service.map_status(raw_data.get("status")),
             "travel_purpose": booker.get("travel_purpose"),
             "country_code": country_code,
-            "region": CommonService.get_region(country_code),
+            "region": self.common_service.get_region(country_code),
             "currency": currency,
             "check_in_date": raw_data.get("start", "")[:10] or None,
             "check_out_date": raw_data.get("end", "")[:10] or None,

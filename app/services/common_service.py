@@ -2,6 +2,7 @@ import requests
 from ratelimit import limits, sleep_and_retry
 from app.data.country_region_map import COUNTRY_REGION_MAP
 from app.data.status_map import STATUS_MAP
+from app.config.settings import EXCHANGE_RATE_API_BASE_URL
 
 ONE_SECOND = 1
 MAX_CALLS_PER_SECOND = 1
@@ -23,11 +24,12 @@ class CommonService:
     @sleep_and_retry
     @limits(calls=MAX_CALLS_PER_SECOND, period=ONE_SECOND)
     def get_exchange_rate(base_currency: str, target_currency: str = "USD") -> float:
-        url = f"https://api.exchangerate-api.com/v4/latest/{base_currency}"
+        url = f"{EXCHANGE_RATE_API_BASE_URL}/{base_currency}"
         response = requests.get(url, timeout=10)
         response.raise_for_status()
         data = response.json()
         return data["rates"].get(target_currency)
+
 
     @staticmethod
     def parse_label(label: str) -> dict:

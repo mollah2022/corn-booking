@@ -16,6 +16,21 @@ services:
     networks:
       - booking_net
 
+  test_postgres:
+    image: postgres:16
+    container_name: booking_test_postgres
+    restart: always
+    environment:
+      POSTGRES_USER: test_user
+      POSTGRES_PASSWORD: test_pass
+      POSTGRES_DB: test_booking_db
+    ports:
+      - "5434:5432"
+    tmpfs:
+      - /var/lib/postgresql/data
+    networks:
+      - booking_net
+
   dbgate:
     image: dbgate/dbgate
     container_name: booking_dbgate
