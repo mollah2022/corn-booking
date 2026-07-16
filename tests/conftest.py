@@ -135,3 +135,20 @@ def booking_cron_class():
     return BookingCron
 
 
+# ---------- db.py session_scope ----------
+
+@pytest.fixture(scope="function")
+def real_session_scope(db_engine, mocker):
+    """Patches app.db.SessionLocal to use our test engine's connection,
+    so session_scope() itself can be exercised end-to-end."""
+    from sqlalchemy.orm import sessionmaker
+    connection = db_engine.connect()
+    transaction = connection.begin()
+    TestSessionLocal = sessionmaker(bind=connection)
+
+    mocker.patch("app.db.SessionLocal", TestSessionLocal)
+
+    yield
+
+    transaction.rollback()
+    connection.close()
