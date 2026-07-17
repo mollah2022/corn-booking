@@ -100,8 +100,22 @@ booking_project/
 git clone https://github.com/mollah2022/corn-booking.git
 cd corn-booking
 
-# 2. Start infrastructure (Postgres, Redis, dbgate, test Postgres)
+# 2. .secrets.toml 
+cat > .secrets.toml << 'EOF'
+[default]
+db_password = "booking_pass"
+booking_api_key = ""
+
+[testing]
+db_password = "test_pass"
+EOF
+
+
+# 3. Start infrastructure (Postgres, Redis, dbgate, test Postgres)
 docker-compose up -d
+
+# 4. Booking sync চ
+docker-compose run --rm cron python main.py --job booking --from 2026-06-01 --to 2026-09-30
 
 # 3. Create and activate a virtual environment
 python3 -m venv venv

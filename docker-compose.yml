@@ -1,5 +1,3 @@
-version: "3.9"
-
 services:
   postgres:
     image: postgres:16
@@ -13,6 +11,28 @@ services:
       - "5433:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    networks:
+      - booking_net
+
+  dbgate:
+    image: dbgate/dbgate
+    container_name: booking_dbgate
+    restart: always
+    ports:
+      - "3000:3000"
+    volumes:
+      - dbgate_data:/root/.dbgate
+    depends_on:
+      - postgres
+    networks:
+      - booking_net
+
+  redis:
+    image: redis:7-alpine
+    container_name: booking_redis
+    restart: always
+    ports:
+      - "6379:6379"
     networks:
       - booking_net
 
@@ -31,27 +51,39 @@ services:
     networks:
       - booking_net
 
-  dbgate:
-    image: dbgate/dbgate
-    container_name: booking_dbgate
+  api_app:
+    build:
+      context: .
+      dockerfile: api_app/Dockerfile
+    container_name: booking_api_app
     restart: always
     ports:
-      - "3433:3000"
+      - "5001:5001"
+    environment:
+      BOOKING_ENV: docker
     volumes:
-      - dbgate_data:/root/.dbgate
+      - ./.secrets.toml:/app/.secrets.toml:ro
     depends_on:
-      - postgres
+      - redis
     networks:
       - booking_net
 
-  redis:
-    image: redis:7-alpine
-    container_name: booking_redis
-    restart: always
-    ports:
-      - "6379:6379"
+  cron:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: booking_cron
+    environment:
+      BOOKING_ENV: docker
+    volumes:
+      - ./.secrets.toml:/app/.secrets.toml:ro
+    depends_on:
+      - postgres
+      - api_app
     networks:
       - booking_net
+    profiles:
+      - manual
 
 volumes:
   postgres_data:
