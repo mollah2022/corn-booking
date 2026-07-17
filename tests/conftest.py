@@ -152,8 +152,3 @@ def real_session_scope(db_engine, mocker):
 
     transaction.rollback()
     connection.close()
-
-@pytest.fixture(scope="function")
-def flights_cron_class():
-    from app.cron.flights import FlightsCron
-    return FlightsCron

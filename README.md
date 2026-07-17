@@ -188,6 +188,8 @@ The project maintains **100% test coverage**. Tests are organized to mirror the 
 ```bash
 # Run the full suite with coverage
 pytest tests/ -v --cov=app --cov-report=term-missing
+#multiple core
+pytest tests/ -v --cov=app --cov-report=term-missing -n auto
 
 # Enforce the coverage threshold (fails the build if coverage drops)
 pytest tests/ --cov=app --cov-report=term-missing --cov-fail-under=100
