@@ -6,6 +6,7 @@ import sys
 class CronRunner:
     JOB_MODULE_MAP = {
         "booking": "app.cron.booking.BookingCron",
+        "flights": "app.cron.flights.FlightsCron",
         # Add new jobs here when created, for example:
         # "flights": "app.cron.flights.FlightsCron",
         # "cars": "app.cron.cars.CarsCron",
