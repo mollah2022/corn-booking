@@ -97,8 +97,8 @@ booking_project/
 
 ```bash
 # 1. Clone and enter the project
-git clone <repo-url>
-cd booking_project
+git clone https://github.com/mollah2022/corn-booking.git
+cd corn-booking
 
 # 2. Start infrastructure (Postgres, Redis, dbgate, test Postgres)
 docker-compose up -d
