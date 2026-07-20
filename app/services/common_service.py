@@ -1,3 +1,4 @@
+from typing import Optional
 import requests
 from ratelimit import limits, sleep_and_retry
 from app.data.country_region_map import COUNTRY_REGION_MAP
@@ -11,7 +12,7 @@ MAX_CALLS_PER_SECOND = 1
 class CommonService:
 
     @staticmethod
-    def get_region(country_code: str) -> str:
+    def get_region(country_code: str) -> Optional[str]:
         if not country_code:
             return None
         return COUNTRY_REGION_MAP.get(country_code.upper(), "other")

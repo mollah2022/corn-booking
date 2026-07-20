@@ -44,6 +44,12 @@ coverage.xml
 *.py,cover
 .hypothesis/
 .pytest_cache/
+test-results.xml
+junit*.xml
+
+# Sonar / quality reports
+.scannerwork/
+.sonar/
 
 # Virtual environments
 venv/

@@ -44,8 +44,8 @@ class BookingCron:
         logger.info(f"Fetching bookings updated_from={self.updated_from} updated_to={self.updated_to}")
         try:
             return self.api_client.fetch_bookings(self.updated_from, self.updated_to)
-        except Exception as e:
-            logger.error(f"Failed to fetch bookings from API App: {e}")
+        except Exception:
+            logger.exception("Failed to fetch bookings from API App")
             sys.exit(1)
 
     def _process_bookings(self, session, raw_bookings: list):
@@ -53,9 +53,9 @@ class BookingCron:
             result = self.booking_service.save_all(session, raw_bookings)
             self.inserted_count = result["inserted"]
             self.updated_count = result["updated"]
-        except Exception as e:
+        except Exception:
             self.failed_count = len(raw_bookings)
-            logger.error(f"Bulk processing failed: {e}")
+            logger.exception("Bulk processing failed")
 
     def _report(self):
         logger.info(

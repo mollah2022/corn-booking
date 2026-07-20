@@ -85,9 +85,27 @@ services:
     profiles:
       - manual
 
+  sonarqube:
+    image: sonarqube:community
+    container_name: booking_sonarqube
+    restart: always
+    ports:
+      - "9000:9000"
+    environment:
+      SONAR_ES_BOOTSTRAP_CHECKS_DISABLE: "true"
+    volumes:
+      - sonarqube_data:/opt/sonarqube/data
+      - sonarqube_extensions:/opt/sonarqube/extensions
+      - sonarqube_logs:/opt/sonarqube/logs
+    networks:
+      - booking_net
+
 volumes:
   postgres_data:
   dbgate_data:
+  sonarqube_data:
+  sonarqube_extensions:
+  sonarqube_logs:
 
 networks:
   booking_net:
