@@ -1,8 +1,9 @@
 import sentry_sdk
+from sentry_sdk.integrations.flask import FlaskIntegration
 from flask import Flask
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
-from api_app.config import REDIS_URL
+from api_app.config import REDIS_URL, SENTRY_DSN, SENTRY_ENVIRONMENT
 
 if SENTRY_DSN:
     sentry_sdk.init(

@@ -31,7 +31,6 @@ class CommonService:
         data = response.json()
         return data["rates"].get(target_currency)
 
-
     @staticmethod
     def parse_label(label: str) -> dict:
         parts = label.split("_")

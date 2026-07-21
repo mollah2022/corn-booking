@@ -18,6 +18,7 @@ logger = logging.getLogger("booking_cron")
 
 init_sentry()
 
+
 class BookingCron:
     """Cron job responsible for syncing booking data from the API App into the database."""
 

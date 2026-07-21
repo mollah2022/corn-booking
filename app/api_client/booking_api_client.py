@@ -14,7 +14,7 @@ class BookingApiClient(BookingApiInterface):
         wait=wait_exponential(multiplier=2, min=2, max=10),
         retry=retry_if_exception_type(requests.exceptions.RequestException),
         reraise=True,
-    )   
+    )
     def fetch_bookings(self, updated_from: str, updated_to: str) -> list:
         headers = {}
         if self.api_key:
