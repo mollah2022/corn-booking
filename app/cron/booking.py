@@ -1,8 +1,10 @@
 import sys
 import logging
+import sentry_sdk
 from datetime import datetime, timedelta, timezone
 
 from app.db import session_scope
+from app.sentry import init_sentry
 from app.config.settings import BOOKING_API_BASE_URL, BOOKING_API_KEY
 from app.api_client.booking_api_client import BookingApiClient
 from app.repositories.booking_repository import BookingRepository
@@ -14,6 +16,7 @@ logging.basicConfig(
 )
 logger = logging.getLogger("booking_cron")
 
+init_sentry()
 
 class BookingCron:
     """Cron job responsible for syncing booking data from the API App into the database."""
@@ -46,6 +49,8 @@ class BookingCron:
             return self.api_client.fetch_bookings(self.updated_from, self.updated_to)
         except Exception:
             logger.exception("Failed to fetch bookings from API App")
+            sentry_sdk.capture_exception()
+            sentry_sdk.flush(timeout=5)
             sys.exit(1)
 
     def _process_bookings(self, session, raw_bookings: list):
@@ -56,6 +61,7 @@ class BookingCron:
         except Exception:
             self.failed_count = len(raw_bookings)
             logger.exception("Bulk processing failed")
+            sentry_sdk.capture_exception()
 
     def _report(self):
         logger.info(

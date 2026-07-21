@@ -17,3 +17,6 @@ config = Dynaconf(
 REDIS_HOST = config.redis_host
 REDIS_PORT = config.redis_port
 REDIS_URL = f"redis://{REDIS_HOST}:{REDIS_PORT}"
+
+SENTRY_DSN = config.get("sentry_dsn", None)
+SENTRY_ENVIRONMENT = config.get("sentry_environment", "development")
