@@ -1,0 +1,97 @@
+name: CI
+
+on:
+  push:
+    branches: [main, testing]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: test_user
+          POSTGRES_PASSWORD: test_pass
+          POSTGRES_DB: test_booking_db
+        ports:
+          - 5434:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install flake8
+
+      - name: Lint with flake8
+        run: |
+          flake8 app api_app --max-line-length=120 --exclude=__pycache__ --statistics
+
+      - name: Create test config
+        run: |
+          cat > settings.toml << 'TOMLEOF'
+          [default]
+          flask_env = "development"
+          db_host = "localhost"
+          db_port = 5433
+          db_name = "booking_db"
+          db_user = "booking_user"
+          booking_api_base_url = "http://localhost:5001"
+          redis_host = "localhost"
+          redis_port = 6379
+          exchange_rate_api_base_url = "https://api.exchangerate-api.com/v4/latest"
+          sentry_environment = "ci"
+
+          [testing]
+          db_host = "localhost"
+          db_port = 5434
+          db_name = "test_booking_db"
+          db_user = "test_user"
+          TOMLEOF
+
+          cat > .secrets.toml << 'SECEOF'
+          [default]
+          db_password = "booking_pass"
+          booking_api_key = ""
+          sentry_dsn = ""
+
+          [testing]
+          db_password = "test_pass"
+          SECEOF
+
+      - name: Run tests with coverage
+        run: |
+          pytest tests/ -v --cov=app --cov-report=term-missing --cov-report=xml --cov-fail-under=100
+
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: coverage.xml

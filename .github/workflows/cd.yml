@@ -1,0 +1,33 @@
+name: CD
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    needs: []
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build cron image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: Dockerfile
+          push: false
+          tags: booking-project-cron:latest
+
+      - name: Build api_app image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: api_app/Dockerfile
+          push: false
+          tags: booking-project-api-app:latest
