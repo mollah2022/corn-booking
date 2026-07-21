@@ -51,5 +51,5 @@ class BookingService:
         }
 
     def save_all(self, session, raw_bookings: list) -> dict:
-        transformed_records = [self.transform(raw) for raw in raw_bookings]
+        transformed_records  = [self.transform(raw) for raw in raw_bookings]
         return self.booking_repository.bulk_save(session, transformed_records)
